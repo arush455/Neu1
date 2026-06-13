@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "blazeprogress",
+  "version": "${version}",
+  "name": "BlazeProgress",
+  "description": "Compares your Blaze Slayer (Inferno Demonlord) gear against a target Mage/Inferno T4 setup and shows how close you are as an in-game overlay. Read-only — no automation.",
+  "authors": [
+    "Neu1"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/blazeprogress/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "dev.neu1.blazeprogress.BlazeProgress"
+    ],
+    "client": [
+      "dev.neu1.blazeprogress.client.BlazeProgressClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
