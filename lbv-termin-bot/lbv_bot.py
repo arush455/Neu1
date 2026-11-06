@@ -56,6 +56,7 @@ class Config:
     interval: int
     headless: bool
     max_calendar_pages: int
+    only_today: bool
     ntfy_topic: str | None
     raw: dict = field(default_factory=dict)
 
@@ -103,6 +104,7 @@ def load_config(path: Path) -> Config:
         headless=bool(c.get("unsichtbar", False)),
         max_calendar_pages=int(c.get("max_kalenderseiten", 4)),
         ntfy_topic=c.get("ntfy_thema"),
+        only_today=bool(c.get("nur_heute", False)),
         raw=c,
     )
 
@@ -397,6 +399,9 @@ def current_date_on_page(page: Page) -> dt.date | None:
 
 
 def date_ok(cfg: Config, d: dt.date | None) -> bool:
+    if cfg.only_today:
+        # Datum wird bei jedem Versuch neu bestimmt, also auch nach Mitternacht richtig
+        return d is None or d == dt.date.today()
     if d is None:
         return True  # unbekannt – wir prüfen später nochmal
     if cfg.earliest and d < cfg.earliest:
@@ -420,6 +425,8 @@ def pick_slot(page: Page, cfg: Config) -> tuple[dt.date | None, dt.time] | None:
         day = current_date_on_page(page)
         for t, lbl, el in find_times(page):
             d = parse_date(lbl) or day
+            if cfg.only_today and d is None:
+                continue
             if date_ok(cfg, d) and time_ok(cfg, t):
                 el.click()
                 settle(page)
@@ -435,6 +442,11 @@ def pick_slot(page: Page, cfg: Config) -> tuple[dt.date | None, dt.time] | None:
             d, lbl, el = days[idx]
             if not date_ok(cfg, d):
                 continue
+            # Kalenderfeld ohne Datum (nur Tageszahl): bei nur_heute muss die Zahl stimmen
+            day_num = (lbl.strip().split() or [""])[-1]
+            is_today_cell = d == dt.date.today() or day_num == str(dt.date.today().day)
+            if cfg.only_today and not is_today_cell:
+                continue
             tried += 1
             try:
                 el.click()
@@ -442,7 +454,9 @@ def pick_slot(page: Page, cfg: Config) -> tuple[dt.date | None, dt.time] | None:
                 continue
             settle(page)
             d = d or current_date_on_page(page)
-            if not date_ok(cfg, d):
+            if cfg.only_today and d is None and is_today_cell:
+                d = dt.date.today()
+            if not date_ok(cfg, d) or (cfg.only_today and d is None):
                 continue
             for t, tlbl, tel in find_times(page):
                 if time_ok(cfg, t):
@@ -453,6 +467,8 @@ def pick_slot(page: Page, cfg: Config) -> tuple[dt.date | None, dt.time] | None:
                 break
 
         # 3) nächste Woche / nächsten Monat
+        if cfg.only_today:
+            break
         if not click_text(page, re.compile(r"(nächste|naechste|vor|später|weiter)\s*(woche|monat|seite|termine)?\s*[>»]?$|^[>»›]+$", re.I)):
             break
         settle(page)
@@ -583,11 +599,14 @@ def main() -> None:
     ap.add_argument("--config", default=str(HERE / "config.yaml"))
     ap.add_argument("--dry-run", action="store_true", help="nicht absenden, nur bis zum Formular")
     ap.add_argument("--once", action="store_true", help="nur ein Durchlauf")
+    ap.add_argument("--heute", action="store_true", help="nur Termine von heute buchen")
     args = ap.parse_args()
     cfg = load_config(Path(args.config))
+    if args.heute:
+        cfg.only_today = True
 
-    log(f"Suche '{cfg.service}' | Standorte: {', '.join(cfg.locations) or 'egal'} | "
-        f"{cfg.earliest or 'ab sofort'} bis {cfg.latest or 'offen'} | {cfg.time_from:%H:%M}–{cfg.time_to:%H:%M}")
+    log(f"Suche '{cfg.service}' | Standorte: {', '.join(cfg.locations) or 'egal'} | " +
+        ("NUR HEUTE" if cfg.only_today else f"{cfg.earliest or 'ab sofort'} bis {cfg.latest or 'offen'}") + f" | {cfg.time_from:%H:%M}–{cfg.time_to:%H:%M}")
 
     with sync_playwright() as pw:
         launch = {"headless": cfg.headless}

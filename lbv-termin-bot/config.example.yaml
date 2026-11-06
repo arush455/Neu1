@@ -13,6 +13,10 @@ standorte:
   - Mitte
   - West
 
+# true = nur Termine von HEUTE buchen (frühestens/spätestens werden dann ignoriert).
+# Geht auch ohne Config-Änderung mit:  python lbv_bot.py --heute
+nur_heute: true
+
 # Zeitraum (JJJJ-MM-TT). Leer lassen = ab sofort / ohne Ende.
 frühestens:
 spätestens: 2026-12-31

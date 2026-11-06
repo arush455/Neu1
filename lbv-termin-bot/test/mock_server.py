@@ -3,12 +3,15 @@ Nachgebaute Mini-Terminseite zum Testen des Bots (ohne den echten LBV-Server).
 Start:  python test/mock_server.py   → http://127.0.0.1:8765/frontend/index.php
 """
 import datetime as dt
+import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs, urlparse
 
 BOOKED = []
 TODAY = dt.date.today()
 FREE_DAYS = [TODAY + dt.timedelta(days=n) for n in (3, 9, 16)]
+if os.environ.get("MOCK_HEUTE"):  # zum Testen von --heute
+    FREE_DAYS.insert(0, TODAY)
 
 
 def page(body):
@@ -52,7 +55,7 @@ class H(BaseHTTPRequestHandler):
             cells = "".join(
                 f'<a href="?step=cal&loc=mitte&day={d.isoformat()}" title="{d:%d.%m.%Y}">{d.day}</a> ' if d in FREE_DAYS
                 else f'<span class="disabled">{d.day}</span> '
-                for d in (TODAY + dt.timedelta(days=i) for i in range(1, 21))
+                for d in (TODAY + dt.timedelta(days=i) for i in range(0, 21))
             )
             times = ""
             if sel:

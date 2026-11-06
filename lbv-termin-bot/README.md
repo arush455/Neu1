@@ -22,6 +22,7 @@ lbv-termine.de stehen (ein eindeutiger Teil des Textes reicht).
 ```bash
 python lbv_bot.py --dry-run --once   # erst testen: füllt das Formular aus, schickt NICHT ab
 python lbv_bot.py                    # sucht alle paar Minuten und bucht, sobald etwas frei ist
+python lbv_bot.py --heute            # nur einen Termin von heute buchen
 ```
 
 - Der Browser ist sichtbar, damit du zusehen und notfalls ein Captcha lösen kannst.
@@ -31,6 +32,10 @@ python lbv_bot.py                    # sucht alle paar Minuten und bucht, sobald
   bei `ntfy_thema` eintragen.
 - Der Bot fragt höchstens einmal pro Minute (Standard: alle 3 Min.). Bitte nicht schneller
   stellen, und nur für dich selbst buchen.
+
+**Nur heute:** Mit `nur_heute: true` in der config oder `--heute` nimmt der Bot ausschließlich
+Termine vom aktuellen Tag. Ist das Datum eines Termins nicht eindeutig erkennbar, lässt er ihn
+lieber aus. Läuft der Bot über Mitternacht weiter, gilt danach automatisch der neue Tag.
 
 ## Wenn etwas hakt
 
