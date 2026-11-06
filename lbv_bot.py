@@ -90,7 +90,7 @@ def load_config(path: Path) -> Config:
         locs = [locs]
     return Config(
         url=c.get("url", "https://www.lbv-termine.de/frontend/index.php"),
-        category=c["kategorie"],
+        category=c.get("kategorie") or "",
         services=[c["dienstleistung"]] if isinstance(c["dienstleistung"], str) else list(c["dienstleistung"]),
         count=int(c.get("anzahl", 1)),
         locations=locs,
@@ -253,6 +253,11 @@ MARK_SERVICE_JS = r"""
     if (plus) { plus.setAttribute('data-lbvbot', 'x'); return 'plus'; }
     const box = node.querySelector('input[type=checkbox], input[type=radio]');
     if (box) { box.setAttribute('data-lbvbot', 'x'); return 'check'; }
+    // Karten-Layout: eigener Button in der Karte, z. B. "zum Vor-Ort-Termin"
+    const btns = [...node.querySelectorAll('button, a, input[type=submit], input[type=button]')]
+      .filter(b => b.offsetParent && !b.contains(best));
+    const btn = btns.find(b => /termin|auswählen|buchen|weiter/i.test(b.innerText || b.value || '')) || (btns.length === 1 ? btns[0] : null);
+    if (btn) { btn.setAttribute('data-lbvbot', 'x'); return 'button'; }
   }
   best.setAttribute('data-lbvbot', 'x');
   return 'text';
@@ -293,6 +298,8 @@ def choose_service(page: Page, cfg: Config) -> None:
             page.wait_for_timeout(200)
     elif kind == "check":
         target.check()
+    elif kind == "button":
+        target.click()
     else:
         target.click()
     settle(page)

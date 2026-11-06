@@ -5,15 +5,12 @@ url: https://www.lbv-termine.de/frontend/index.php
 
 # Genau so schreiben, wie es auf lbv-termine.de steht (Teil des Textes reicht).
 # Bei dienstleistung gehen mehrere Schreibweisen: die erste, die auf der Seite steht, wird genommen.
-kategorie: Führerschein
+# Auf lbv-termine.de gibt es (Stand 11/2026) keine Kategorie-Auswahl mehr – leer lassen.
+kategorie: ""
 dienstleistung:
+  - Abholung bestellter EU-Kartenführerschein   # genauer Name auf lbv-termine.de
   - Abholung bestellter EU-Führerscheinkarte
-  - Abholung eines bestellten EU-Kartenführerscheins
-  - Abholung des bestellten
-  - Abholung bestellter
   - Abholung eines bestellten
-  - Führerschein abholen
-  - Abholung
 anzahl: 1
 
 # Standorte in deiner Wunsch-Reihenfolge (Teil des Namens reicht). Leer lassen = egal.

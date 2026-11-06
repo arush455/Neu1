@@ -33,18 +33,12 @@ class H(BaseHTTPRequestHandler):
         u = urlparse(self.path)
         q = {k: v[0] for k, v in parse_qs(u.query).items()}
         step = q.get("step", "start")
-        if step == "start":
-            self.send(page("""<h1>Terminvereinbarung</h1>
-              <a href="?step=service&cat=fs">Führerschein</a> <a href="?step=service&cat=kfz">Zulassung</a>"""))
-        elif step == "service":
-            self.send(page("""<form action="" method=get><input type=hidden name=step value=loc>
-              <ul><li><span>Umschreibung ausländischer Führerschein</span>
-                  <button type=button onclick="n.value=+n.value+1">+</button><input id=n name=anzahl value=0 readonly></li>
-                <li><span>Abholung eines bestellten EU-Kartenführerscheins</span>
-                  <button type=button onclick="k.value=+k.value+1">+</button><input id=k name=anzahl3 value=0 readonly></li>
-                <li><span>Tausch eines deutschen Führerscheins in einen befristeten EU-Kartenführerschein</span>
-                  <button type=button onclick="m.value=+m.value+1">+</button><input id=m name=anzahl2 value=0 readonly></li></ul>
-              <input type=submit value="Weiter"></form>"""))
+        if step == "start":  # wie lbv-termine.de: Karten mit eigenem Button
+            self.send(page("""<h1>Dienstleistungsauswahl</h1><input type=search placeholder="Dienstleistungen suchen">
+              <h2>Vor-Ort-Termin</h2>
+              <div class=card><h3>Abholung bestellter EU-Kartenführerschein</h3><p>Den bestellten Führerschein können Sie hierüber abholen.</p><a class=btn href="?step=loc">zum Vor-Ort-Termin</a></div>
+              <div class=card><h3>Änderung von Führerscheindaten</h3><p>Hiermit können Sie die Angaben auf Ihrem Führerschein aktualisieren.</p><a class=btn href="?step=loc">zum Vor-Ort-Termin</a></div>
+              <div class=card><h3>Ausländische Fahrerlaubnis oder Dienstfahrerlaubnis umschreiben</h3><p>Umschreibung.</p><a class=btn href="?step=loc">zum Vor-Ort-Termin</a></div>"""))
         elif step == "loc":
             self.send(page("""<h2>Standort wählen</h2>
               <a href="?step=cal&loc=west">LBV West (Schnackenburgallee)</a><br>
