@@ -30,9 +30,9 @@ uhrzeit_von: "07:00"
 uhrzeit_bis: "18:00"
 
 person:
-  vorname: Arush
-  nachname: Lund
-  email: lundarusch020@gmail.com
+  vorname: Max
+  nachname: Mustermann
+  email: max@example.com
   telefon: ""            # optional
   geburtsdatum: ""        # nur falls abgefragt, z. B. 01.02.1990
 
