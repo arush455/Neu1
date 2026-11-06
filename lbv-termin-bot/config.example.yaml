@@ -1,0 +1,36 @@
+# Kopiere diese Datei nach config.yaml und trage deine Daten ein.
+# config.yaml wird NICHT ins Git hochgeladen (steht in .gitignore).
+
+url: https://www.lbv-termine.de/frontend/index.php
+
+# Genau so schreiben, wie es auf lbv-termine.de steht (Teil des Textes reicht).
+kategorie: Führerschein
+dienstleistung: Tausch eines deutschen Führerscheins in einen befristeten EU-Kartenführerschein
+anzahl: 1
+
+# Standorte in deiner Wunsch-Reihenfolge (Teil des Namens reicht). Leer lassen = egal.
+standorte:
+  - Mitte
+  - West
+
+# Zeitraum (JJJJ-MM-TT). Leer lassen = ab sofort / ohne Ende.
+frühestens:
+spätestens: 2026-12-31
+wochentage: [mo, di, mi, do, fr]
+uhrzeit_von: "07:00"
+uhrzeit_bis: "18:00"
+
+person:
+  vorname: Max
+  nachname: Mustermann
+  email: max@example.com
+  telefon: "0170 1234567"
+  geburtsdatum: ""        # nur falls abgefragt, z. B. 01.02.1990
+
+intervall_sekunden: 180   # wie oft gesucht wird (mindestens 60)
+unsichtbar: false         # false = du siehst den Browser (nötig, falls ein Captcha kommt)
+max_kalenderseiten: 4     # wie viele Wochen/Monate nach vorne geblättert wird
+
+# Optional: Push-Nachricht aufs Handy über die kostenlose App "ntfy".
+# Denk dir einen geheimen Namen aus und abonniere ihn in der App.
+ntfy_thema:
