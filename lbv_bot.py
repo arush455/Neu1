@@ -44,7 +44,7 @@ CAPTCHA_HINT = r"(captcha|sicherheitsabfrage|ich bin kein roboter)"
 class Config:
     url: str
     category: str
-    service: str
+    services: list[str]  # Alternativen, werden der Reihe nach probiert
     count: int
     locations: list[str]
     earliest: dt.date | None
@@ -91,7 +91,7 @@ def load_config(path: Path) -> Config:
     return Config(
         url=c.get("url", "https://www.lbv-termine.de/frontend/index.php"),
         category=c["kategorie"],
-        service=c["dienstleistung"],
+        services=[c["dienstleistung"]] if isinstance(c["dienstleistung"], str) else list(c["dienstleistung"]),
         count=int(c.get("anzahl", 1)),
         locations=locs,
         earliest=_date(c.get("frühestens") or c.get("fruehestens")),
@@ -268,12 +268,17 @@ def choose_category(page: Page, cfg: Config) -> None:
 
 def choose_service(page: Page, cfg: Config) -> None:
     page.evaluate("() => document.querySelectorAll('[data-lbvbot]').forEach(e => e.removeAttribute('data-lbvbot'))")
-    kind = page.evaluate(MARK_SERVICE_JS, [cfg.service, cfg.count])
+    kind = "not-found"
+    for name in cfg.services:
+        kind = page.evaluate(MARK_SERVICE_JS, [name, cfg.count])
+        if kind != "not-found":
+            log(f"  Dienstleistung '{name}'")
+            break
     target = page.locator("[data-lbvbot]").first
     log(f"  Dienstleistung gefunden ({kind})")
     if kind == "not-found":
         snapshot(page, "dienstleistung-nicht-gefunden")
-        raise RuntimeError(f"Dienstleistung '{cfg.service}' nicht gefunden. Schreibweise in config.yaml prüfen.")
+        raise RuntimeError(f"Dienstleistung {cfg.services} nicht gefunden. Schreibweise in config.yaml prüfen.")
     if kind == "select":
         try:
             target.select_option(str(cfg.count))
@@ -605,7 +610,7 @@ def main() -> None:
     if args.heute:
         cfg.only_today = True
 
-    log(f"Suche '{cfg.service}' | Standorte: {', '.join(cfg.locations) or 'egal'} | " +
+    log(f"Suche '{cfg.services[0]}' | Standorte: {', '.join(cfg.locations) or 'egal'} | " +
         ("NUR HEUTE" if cfg.only_today else f"{cfg.earliest or 'ab sofort'} bis {cfg.latest or 'offen'}") + f" | {cfg.time_from:%H:%M}–{cfg.time_to:%H:%M}")
 
     with sync_playwright() as pw:

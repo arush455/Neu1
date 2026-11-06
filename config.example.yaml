@@ -4,8 +4,16 @@
 url: https://www.lbv-termine.de/frontend/index.php
 
 # Genau so schreiben, wie es auf lbv-termine.de steht (Teil des Textes reicht).
+# Bei dienstleistung gehen mehrere Schreibweisen: die erste, die auf der Seite steht, wird genommen.
 kategorie: Führerschein
-dienstleistung: Tausch eines deutschen Führerscheins in einen befristeten EU-Kartenführerschein
+dienstleistung:
+  - Abholung bestellter EU-Führerscheinkarte
+  - Abholung eines bestellten EU-Kartenführerscheins
+  - Abholung des bestellten
+  - Abholung bestellter
+  - Abholung eines bestellten
+  - Führerschein abholen
+  - Abholung
 anzahl: 1
 
 # Standorte in deiner Wunsch-Reihenfolge (Teil des Namens reicht). Leer lassen = egal.

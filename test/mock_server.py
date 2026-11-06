@@ -40,6 +40,8 @@ class H(BaseHTTPRequestHandler):
             self.send(page("""<form action="" method=get><input type=hidden name=step value=loc>
               <ul><li><span>Umschreibung ausländischer Führerschein</span>
                   <button type=button onclick="n.value=+n.value+1">+</button><input id=n name=anzahl value=0 readonly></li>
+                <li><span>Abholung eines bestellten EU-Kartenführerscheins</span>
+                  <button type=button onclick="k.value=+k.value+1">+</button><input id=k name=anzahl3 value=0 readonly></li>
                 <li><span>Tausch eines deutschen Führerscheins in einen befristeten EU-Kartenführerschein</span>
                   <button type=button onclick="m.value=+m.value+1">+</button><input id=m name=anzahl2 value=0 readonly></li></ul>
               <input type=submit value="Weiter"></form>"""))
